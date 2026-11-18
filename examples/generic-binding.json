@@ -1,0 +1,24 @@
+{
+  "schema": "vco.binding.v1",
+  "name": "generic-example",
+  "description": "Fictional generic example. Use your own OA masters and model includes for native work.",
+  "model_includes": [
+    {"path": "/path/to/models.scs", "section": "typical"}
+  ],
+  "roles": {
+    "nmos": {
+      "library": "example_pdk",
+      "cell": "nch",
+      "view": "symbol",
+      "model": "nch",
+      "terminals": {"d": "D", "g": "G", "s": "S", "b": "B"}
+    },
+    "pmos": {
+      "library": "example_pdk",
+      "cell": "pch",
+      "view": "symbol",
+      "model": "pch",
+      "terminals": {"d": "D", "g": "G", "s": "S", "b": "B"}
+    }
+  }
+}

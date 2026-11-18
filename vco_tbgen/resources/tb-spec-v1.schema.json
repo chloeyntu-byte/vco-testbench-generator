@@ -1,0 +1,655 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:vco-tbgen:spec:1.0",
+  "title": "VCO TB Generator Spec v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "mode",
+    "workspace",
+    "cds_lib",
+    "library_path",
+    "dut",
+    "ports",
+    "maestro",
+    "analyses"
+  ],
+  "properties": {
+    "schema": {
+      "const": "vco-tbgen.spec.v1"
+    },
+    "mode": {
+      "enum": [
+        "create_new",
+        "add_test_to_existing"
+      ]
+    },
+    "completeness": {
+      "enum": ["L-b", "L-c", "L-d"]
+    },
+    "workspace": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cds_lib": {
+      "type": "string",
+      "minLength": 1
+    },
+    "library_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dut": {
+      "$ref": "#/definitions/lcv"
+    },
+    "maestro": {
+      "type": "object",
+      "properties": {
+        "lib": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cell": {
+          "type": "string",
+          "minLength": 1
+        },
+        "view": {
+          "type": "string",
+          "minLength": 1
+        },
+        "test": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_test": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "lib",
+        "cell",
+        "view",
+        "test"
+      ],
+      "additionalProperties": false
+    },
+    "ports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "net": {
+            "type": "string",
+            "minLength": 1
+          },
+          "direction": {
+            "enum": [
+              "input",
+              "output",
+              "inputOutput"
+            ]
+          },
+          "role": {
+            "enum": [
+              "supply",
+              "ground",
+              "output_p",
+              "output_n",
+              "bias",
+              "control",
+              "register",
+              "unused",
+              "external",
+              "unknown"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "net",
+          "role"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "supplies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "positive": {
+            "type": "string",
+            "minLength": 1
+          },
+          "negative": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": [
+              "string",
+              "number",
+              "boolean"
+            ]
+          },
+          "domain": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "positive",
+          "negative",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "controls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "positive": {
+            "type": "string",
+            "minLength": 1
+          },
+          "negative": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": [
+              "string",
+              "number",
+              "boolean"
+            ]
+          },
+          "kind": {
+            "enum": [
+              "voltage",
+              "current"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "positive",
+          "negative",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "registers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 30
+          },
+          "members_lsb_first": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "code_variable": {
+            "type": "string",
+            "minLength": 1
+          },
+          "vdd": {
+            "type": "string",
+            "minLength": 1
+          },
+          "vss": {
+            "type": "string",
+            "minLength": 1
+          },
+          "invert": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "implementation": {
+            "enum": [
+              "veriloga"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "width",
+          "members_lsb_first",
+          "code_variable",
+          "vdd",
+          "vss"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "variables": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      }
+    },
+    "corners": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "variables": {
+            "type": "object",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean"
+              ]
+            }
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "sweeps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "variable": {
+            "type": "string",
+            "minLength": 1
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "number",
+                "boolean"
+              ]
+            }
+          },
+          "scope": {
+            "enum": [
+              "test",
+              "global"
+            ]
+          }
+        },
+        "required": [
+          "variable",
+          "values"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "section": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "analyses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "enum": [
+              "hb",
+              "hbnoise",
+              "hbxf",
+              "pss",
+              "pnoise",
+              "dc",
+              "tran",
+              "noise"
+            ]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean"
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "kind",
+          "parameters"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expression": {
+            "type": "string",
+            "minLength": 1
+          },
+          "plot": {
+            "type": "boolean"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "expression"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "saves": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "net",
+              "terminal"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "kind"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "probes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "iprobe",
+              "zero_volt"
+            ]
+          },
+          "dut_port": {
+            "type": "string",
+            "minLength": 1
+          },
+          "net": {
+            "type": "string",
+            "minLength": 1
+          },
+          "internal_net": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "dut_port",
+          "net",
+          "internal_net"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "simulator_options": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      }
+    },
+    "initial_conditions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "properties": {
+        "virtuoso": {
+          "type": "string",
+          "minLength": 1
+        },
+        "environment_script": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timeout_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "min_free_bytes": {
+          "type": "integer",
+          "minimum": 1610612736
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "required": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "analyses",
+        "outputs",
+        "saves"
+      ],
+      "properties": {
+        "schema": {
+          "const": "vco-tbgen.required.v1"
+        },
+        "analyses": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "hb",
+              "hbnoise",
+              "hbxf",
+              "pss",
+              "pnoise",
+              "dc",
+              "tran",
+              "noise"
+            ]
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "kind"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "enum": [
+                  "scalar",
+                  "waveform"
+                ]
+              }
+            }
+          }
+        },
+        "saves": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "analysis_bundle": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "hbxf_injection": {
+      "type": "object",
+      "required": [
+        "name",
+        "positive",
+        "negative",
+        "target_instance"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "positive": {
+          "type": "string",
+          "minLength": 1
+        },
+        "negative": {
+          "type": "string",
+          "minLength": 1
+        },
+        "probe": {
+          "enum": ["iprobe", "zero_volt"]
+        },
+        "drain_terminal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_instance": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "definitions": {
+    "lcv": {
+      "type": "object",
+      "properties": {
+        "lib": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cell": {
+          "type": "string",
+          "minLength": 1
+        },
+        "view": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "lib",
+        "cell",
+        "view"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

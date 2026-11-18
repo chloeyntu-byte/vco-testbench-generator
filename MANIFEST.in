@@ -1,0 +1,6 @@
+include .gitignore .oss-allow README.zh-CN.md CHANGELOG.md RELEASE_NOTES.md vco-tbgen
+recursive-include .github/workflows *.yml
+recursive-include docs *.md *.png
+recursive-include examples *.json *.md
+recursive-include schema *.json
+recursive-include tests *.py *.il

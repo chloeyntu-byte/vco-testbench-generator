@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+TBGEN_ROOT="$(cd "$(dirname "$0")" && pwd)"
+export PYTHONPATH="$TBGEN_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONDONTWRITEBYTECODE=1
+exec "${TBGEN_PYTHON:-python3}" -B -m vco_tbgen "$@"

@@ -1,0 +1,301 @@
+{
+  "schema": "vco-tbgen.spec.v1",
+  "mode": "create_new",
+  "workspace": "/path/to/workspace",
+  "cds_lib": "/path/to/cds.lib",
+  "library_path": "/path/to/workspace/example_tb",
+  "dut": {
+    "lib": "example_dut",
+    "cell": "LC_VCO",
+    "view": "schematic"
+  },
+  "maestro": {
+    "lib": "example_tb",
+    "cell": "OscillatorTB",
+    "view": "maestro",
+    "test": "Oscillator"
+  },
+  "ports": [
+    {
+      "name": "VDD",
+      "net": "VDD",
+      "role": "supply"
+    },
+    {
+      "name": "VSS",
+      "net": "0",
+      "role": "ground"
+    },
+    {
+      "name": "VDC",
+      "net": "VDC",
+      "role": "bias"
+    },
+    {
+      "name": "ENABLE",
+      "net": "ENABLE",
+      "role": "control"
+    },
+    {
+      "name": "OUTP",
+      "net": "OUTP",
+      "role": "output_p"
+    },
+    {
+      "name": "OUTN",
+      "net": "OUTN",
+      "role": "output_n"
+    },
+    {
+      "name": "main_B0",
+      "net": "main_B0",
+      "role": "register"
+    },
+    {
+      "name": "main_B1",
+      "net": "main_B1",
+      "role": "register"
+    },
+    {
+      "name": "main_B2",
+      "net": "main_B2",
+      "role": "register"
+    },
+    {
+      "name": "main_B3",
+      "net": "main_B3",
+      "role": "register"
+    }
+  ],
+  "supplies": [
+    {
+      "name": "VDD_SRC",
+      "positive": "VDD",
+      "negative": "0",
+      "value": "VDD",
+      "domain": "core"
+    }
+  ],
+  "controls": [
+    {
+      "name": "BIAS_SRC",
+      "positive": "VDC",
+      "negative": "0",
+      "value": "VDC",
+      "kind": "voltage"
+    },
+    {
+      "name": "ENABLE_SRC",
+      "positive": "ENABLE",
+      "negative": "0",
+      "value": "VDD",
+      "kind": "voltage"
+    }
+  ],
+  "registers": [
+    {
+      "name": "REG_MAIN",
+      "width": 4,
+      "members_lsb_first": [
+        "main_B0",
+        "main_B1",
+        "main_B2",
+        "main_B3"
+      ],
+      "code_variable": "MAIN_CODE",
+      "vdd": "VDD",
+      "vss": "0",
+      "implementation": "veriloga",
+      "invert": 0
+    }
+  ],
+  "variables": {
+    "VDD": 1.0,
+    "VDC": 0.5,
+    "MAIN_CODE": 4
+  },
+  "models": [
+    {
+      "path": "/path/to/models.scs",
+      "section": "typical"
+    }
+  ],
+  "probes": [
+    {
+      "name": "OUTP_PROBE",
+      "kind": "iprobe",
+      "dut_port": "OUTP",
+      "net": "OUTP",
+      "internal_net": "DUT_OUTP"
+    }
+  ],
+  "analyses": [
+    {
+      "kind": "hb",
+      "parameters": {
+        "oscana": true,
+        "p": "/OUTP",
+        "n": "/OUTN",
+        "HBFreq1": "1G",
+        "HBHarm1": "15",
+        "fundfreqs": [
+          "1G"
+        ],
+        "maxharms": [
+          "15"
+        ],
+        "errpreset": "conservative",
+        "oscic": "lin",
+        "oscmethod": "twotier",
+        "pinnode": "/OUTP",
+        "pinnodeminus": "/OUTN",
+        "pinnoderank": "1",
+        "autosteady": "yes"
+      }
+    },
+    {
+      "kind": "hbnoise",
+      "parameters": {
+        "sweeptype": "relative",
+        "relharmvec": [
+          "1"
+        ],
+        "outType": "voltage",
+        "p": "/OUTP",
+        "n": "/OUTN",
+        "maxsideband": "15",
+        "start": "",
+        "stop": "",
+        "incrType": "Automatic",
+        "dec": "",
+        "useDiscrete": true,
+        "values": [
+          "10000.0",
+          "20000.0"
+        ],
+        "noisetype": "timeaverage",
+        "noiseout": [
+          "pm"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "name": "VDD_VALUE",
+      "expression": "VAR(\"VDD\")"
+    },
+    {
+      "name": "VCO_HB_F0_Hz",
+      "expression": "drGetElem(drGetWaveformXVec(getData(\"/OUTP\" ?result \"hb_fd\")) 1)",
+      "unit": "Hz",
+      "description": "Fundamental frequency from the native HB frequency axis",
+      "plot": true
+    },
+    {
+      "name": "VCO_HB_DIFF_PEAK_V",
+      "expression": "mag(value((getData(\"/OUTP\" ?result \"hb_fd\")-getData(\"/OUTN\" ?result \"hb_fd\")) drGetElem(drGetWaveformXVec(getData(\"/OUTP\" ?result \"hb_fd\")) 1)))",
+      "unit": "V",
+      "description": "Differential fundamental peak voltage = abs(Vp[1]-Vn[1]) in IC618 hb_fd; verified against hb_td, not RMS or peak-to-peak",
+      "plot": true
+    },
+    {
+      "name": "VCO_HB_VDD_SRC_IDC_A",
+      "expression": "0-real(value(getData(\"/VDD_SRC/PLUS\" ?result \"hb_fd\") 0))",
+      "unit": "A",
+      "description": "DC current delivered by source, positive into DUT",
+      "plot": true
+    },
+    {
+      "name": "VCO_HB_VDD_SRC_PDC_W",
+      "expression": "(0-real(value((0+getData(\"/VDD\" ?result \"hb_fd\")) 0))*real(value(getData(\"/VDD_SRC/PLUS\" ?result \"hb_fd\") 0)))",
+      "unit": "W",
+      "description": "DC supply voltage times DC delivered current; excludes RF exchange",
+      "plot": true
+    },
+    {
+      "name": "VCO_HBNOISE_PN_10000Hz_dBc_Hz",
+      "expression": "(10*log10(2)+20*log10(value(getData(\"out\" ?result \"hbnoise_pm\") 10000.0)/mag(value((getData(\"/OUTP\" ?result \"hb_fd\")-getData(\"/OUTN\" ?result \"hb_fd\")) drGetElem(drGetWaveformXVec(getData(\"/OUTP\" ?result \"hb_fd\")) 1)))))",
+      "unit": "dBc/Hz",
+      "description": "Total PM out, SSB phase noise at 10000.0 Hz",
+      "plot": true
+    },
+    {
+      "name": "VCO_HBNOISE_FOM_10000Hz_dB",
+      "expression": "(10*log10(2)+20*log10(value(getData(\"out\" ?result \"hbnoise_pm\") 10000.0)/mag(value((getData(\"/OUTP\" ?result \"hb_fd\")-getData(\"/OUTN\" ?result \"hb_fd\")) drGetElem(drGetWaveformXVec(getData(\"/OUTP\" ?result \"hb_fd\")) 1)))))-20*log10(drGetElem(drGetWaveformXVec(getData(\"/OUTP\" ?result \"hb_fd\")) 1)/10000.0)+10*log10(1000*(0+(0-real(value((0+getData(\"/VDD\" ?result \"hb_fd\")) 0))*real(value(getData(\"/VDD_SRC/PLUS\" ?result \"hb_fd\") 0)))))",
+      "unit": "dB",
+      "description": "Signed oscillator FoM = PN -20log10(f0/offset) +10log10(Pdc/mW)",
+      "plot": true
+    }
+  ],
+  "saves": [
+    {
+      "name": "/OUTP",
+      "kind": "net"
+    },
+    {
+      "name": "/OUTN",
+      "kind": "net"
+    },
+    {
+      "name": "/VDD",
+      "kind": "net"
+    },
+    {
+      "name": "/VDD_SRC/PLUS",
+      "kind": "terminal"
+    }
+  ],
+  "simulator_options": {
+    "temp": "25",
+    "reltol": "1e-4"
+  },
+  "initial_conditions": {
+    "OUTP": 0.501,
+    "OUTN": 0.499
+  },
+  "source": {
+    "kind": "generic_example",
+    "binding": "generic-binding.json"
+  },
+  "completeness": "L-c",
+  "required": {
+    "schema": "vco-tbgen.required.v1",
+    "analyses": [
+      "hb",
+      "hbnoise"
+    ],
+    "outputs": [
+      {
+        "name": "VCO_HB_F0_Hz",
+        "kind": "scalar"
+      },
+      {
+        "name": "VCO_HB_DIFF_PEAK_V",
+        "kind": "scalar"
+      },
+      {
+        "name": "VCO_HB_VDD_SRC_IDC_A",
+        "kind": "scalar"
+      },
+      {
+        "name": "VCO_HB_VDD_SRC_PDC_W",
+        "kind": "scalar"
+      },
+      {
+        "name": "VCO_HBNOISE_PN_10000Hz_dBc_Hz",
+        "kind": "scalar"
+      },
+      {
+        "name": "VCO_HBNOISE_FOM_10000Hz_dB",
+        "kind": "scalar"
+      }
+    ],
+    "saves": [
+      "/OUTP",
+      "/OUTN",
+      "/VDD",
+      "/VDD_SRC/PLUS"
+    ]
+  }
+}
