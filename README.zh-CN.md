@@ -49,6 +49,10 @@ vco-tbgen plan examples/generic-request.json --json
 | `run MATERIALIZED.json` | 运行指定的已保存 Maestro 测试 |
 | `results RECEIPT.json` | 读取结果或查询后台运行状态 |
 
+## 调用规则
+
+- [宿主程序调用规则](docs/CALLING_RULES.md)（英文）：如何找到生成器、完整度等级、调用流程、写入规则，以及 VCO ISF Explorer 的调用方式。
+
 ## 限制
 
 原生流程此前在一套 Virtuoso IC6.1.8 与 Spectre 18.1 环境中覆盖三种 CMOS 工艺验证，工艺名不公开。示例采用虚构绑定和合成输入。已有测试保留机制仅验证了 setupdb v6 和 statedb v5。生成器负责准备和核验测试电路及结果。振荡器设计、其它版本的兼容性验证和签核由用户负责。

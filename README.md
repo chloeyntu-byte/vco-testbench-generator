@@ -49,6 +49,10 @@ Use an exported Design Lab project, a saved Maestro test or a new fixture around
 | `run MATERIALIZED.json` | Run the named saved Maestro test |
 | `results RECEIPT.json` | Retrieve recorded results or poll a run handle |
 
+## Calling rules
+
+- [Calling rules for host applications](docs/CALLING_RULES.md): discovery, levels, lifecycle, writing rules and how VCO ISF Explorer calls the generator.
+
 ## Limitations
 
 Historical native verification covered one Virtuoso IC6.1.8 and Spectre 18.1 installation and three CMOS processes. Process names are withheld. The example uses fictional bindings and synthetic input values. Existing-test preservation is qualified for setupdb v6 and statedb v5. The generator prepares and checks the testbench and results. Oscillator design, broader tool qualification, and circuit sign-off are the user's responsibility.
