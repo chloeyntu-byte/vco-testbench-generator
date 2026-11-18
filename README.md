@@ -59,13 +59,30 @@ Historical native verification covered one Virtuoso IC6.1.8 and Spectre 18.1 ins
 
 See the [specification](docs/SPEC.md) for levels L-a through L-d, session preservation and result qualification.
 
+## Not included in this repository
+
+The following are not part of this repository:
+
+- Bindings for real PDKs. `examples/generic-binding.json` is fictional; write your own as described in [docs/BINDINGS.md](docs/BINDINGS.md).
+- Your Cadence Virtuoso, Maestro and Spectre installation, OA libraries, models and licences, needed for every native step.
+- Oscillator design and sign-off. The generator builds and checks testbenches; it does not size or verify the circuit.
+- Qualification data from real processes. The example request and snapshots are synthetic.
+
+If you need one of these, or an example for your setup, please open a [GitHub issue](https://github.com/chloeyntu-byte/vco-testbench-generator/issues); the maintainer will reply there.
+
 ## RF-FIELDWORK
 
 - Lab home (all tools, narrated films and progress): https://rf-fieldwork.pages.dev/?lang=en
+- This tool's page: https://rf-fieldwork.pages.dev/tbgen/?lang=en
 
-Related open-source tool:
+Other open-source tools:
 
-- [VCO ISF Explorer](https://github.com/chloeyntu-byte/vco-isf-explorer): ISF and harmonic phase-noise analysis; its testbench entries call this generator's ISF module
+- [Flux Studio](https://github.com/chloeyntu-byte/flux-studio): parametric RF passives, EMX sweeps, multi-objective search and SNPFit
+- [Tank Scan Lab](https://github.com/chloeyntu-byte/tank-scan-lab): LC tank scans (f0, Rp, gm, startup margin, loss shares), capacitor-array C/Q and resonance
+- [Layout 3D Viewer](https://github.com/chloeyntu-byte/layout-3d-viewer): read IC layouts in 3D, locate pins and trace connections
+- [VCO ISF Explorer](https://github.com/chloeyntu-byte/vco-isf-explorer): ISF, flicker-noise up-conversion and phase-noise contributions
+- [Crescendo](https://github.com/chloeyntu-byte/crescendo): automatic device-size optimization inside Cadence Maestro
+- [VCO Design Studio](https://github.com/chloeyntu-byte/vco-design-studio): five literature LC VCO topology families, packaged schematics and native export
 
 ## License
 

@@ -59,13 +59,30 @@ vco-tbgen plan examples/generic-request.json --json
 
 L-a 至 L-d、会话保留和结果核验详见[规范](docs/SPEC.md)。
 
+## 未随仓库提供的内容
+
+以下内容不随本仓库提供：
+
+- 真实 PDK 的绑定文件。`examples/generic-binding.json` 是虚构的，请按 [docs/BINDINGS.md](docs/BINDINGS.md) 自己编写。
+- 你自己的 Cadence Virtuoso、Maestro、Spectre 安装，以及 OA 库、模型和许可证；所有原生步骤都需要。
+- 振荡器设计与签核。生成器只负责建立和检查测试台，不做尺寸设计，也不验证电路。
+- 真实工艺的验证数据。示例请求和快照都是合成的。
+
+需要其中某一项，或想为你的环境要一个示例，请在 [GitHub Issues](https://github.com/chloeyntu-byte/vco-testbench-generator/issues) 提出，维护者会在那里回复。
+
 ## RF-FIELDWORK
 
 - 总站（全部工具、演示片与项目进展）：https://rf-fieldwork.pages.dev/?lang=zh
+- 本工具介绍页：https://rf-fieldwork.pages.dev/tbgen/?lang=zh
 
-相关开源工具：
+其他开源工具：
 
-- [VCO ISF Explorer](https://github.com/chloeyntu-byte/vco-isf-explorer)：ISF 与谐波相噪分析；它的测试台入口调用本生成器的 ISF 模块
+- [Flux Studio](https://github.com/chloeyntu-byte/flux-studio)：参数化射频无源器件、EMX 扫参、多目标优化与 SNPFit 拟合
+- [Tank Scan Lab](https://github.com/chloeyntu-byte/tank-scan-lab)：LC 谐振腔扫描（f0、Rp、gm、起振裕量、损耗分摊）、电容阵列 C/Q 与谐振
+- [Layout 3D Viewer](https://github.com/chloeyntu-byte/layout-3d-viewer)：三维阅读版图、定位 pin、追踪连接
+- [VCO ISF Explorer](https://github.com/chloeyntu-byte/vco-isf-explorer)：ISF、闪烁噪声上变频与相噪贡献
+- [Crescendo](https://github.com/chloeyntu-byte/crescendo)：在 Cadence Maestro 里自动优化器件尺寸
+- [VCO Design Studio](https://github.com/chloeyntu-byte/vco-design-studio)：五类文献 LC VCO 拓扑、分层原理图与原生导出
 
 ## 许可证
 
