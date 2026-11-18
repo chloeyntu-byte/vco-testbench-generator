@@ -55,10 +55,14 @@ vco-tbgen plan examples/generic-request.json --json
 
 L-a 至 L-d、会话保留和结果核验详见[规范](docs/SPEC.md)。
 
+## RF-FIELDWORK
+
+- 总站（全部工具、演示片与项目进展）：https://rf-fieldwork.pages.dev/?lang=zh
+
+相关开源工具：
+
+- [VCO ISF Explorer](https://github.com/chloeyntu-byte/vco-isf-explorer)：ISF 与谐波相噪分析；它的测试台入口调用本生成器的 ISF 模块
+
 ## 许可证
 
 [MIT](LICENSE)
-
-## 相关工具
-
-VCO ISF Explorer

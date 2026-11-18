@@ -55,10 +55,14 @@ Historical native verification covered one Virtuoso IC6.1.8 and Spectre 18.1 ins
 
 See the [specification](docs/SPEC.md) for levels L-a through L-d, session preservation and result qualification.
 
+## RF-FIELDWORK
+
+- Lab home (all tools, narrated films and progress): https://rf-fieldwork.pages.dev/?lang=en
+
+Related open-source tool:
+
+- [VCO ISF Explorer](https://github.com/chloeyntu-byte/vco-isf-explorer): ISF and harmonic phase-noise analysis; its testbench entries call this generator's ISF module
+
 ## License
 
 [MIT](LICENSE)
-
-## Related tools
-
-VCO ISF Explorer
