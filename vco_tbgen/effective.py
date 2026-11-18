@@ -7,6 +7,7 @@ import copy
 import itertools
 import json
 import math
+import os
 import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -66,6 +67,62 @@ def variables(parent):
     return {(v.text or '').strip():v.findtext('value','').strip() for v in parent.findall('./vars/var')}
 
 
+def saved_corner_models(active, corner):
+    """Read the IC618 global model group without changing its native settings."""
+    references=corner.findall('modelgroupname')
+    if not references:
+        return []
+    if len(references)!=1:
+        raise ValueError('ambiguous corner model group')
+    name=literal(references[0].text or 'nil')
+    groups=[row for row in active.findall('./modelgroups/modelgroup')
+            if (row.text or '').strip()==name]
+    if len(groups)!=1:
+        raise ValueError('missing or ambiguous corner model group: '+str(name))
+    models=[]
+    for row in groups[0].findall('./models/model'):
+        if row.get('enabled','1')=='0':
+            continue
+        if row.findtext('modeltest')!='All' or row.findtext('modelblock')!='Global':
+            raise ValueError('unsupported model group scope: '+str(name))
+        path=(row.findtext('modelfile') or '').strip()
+        section=literal(row.findtext('modelsection') or 'nil')
+        if (not re.fullmatch(r'/[^"#;\r\n]+',path)
+                or not isinstance(section,str)
+                or not re.fullmatch(r'[A-Za-z0-9_.-]+',section)):
+            raise ValueError('unsupported model group file or section: '+str(name))
+        models.append([os.path.realpath(path),section])
+    if not models or len({tuple(model) for model in models})!=len(models):
+        raise ValueError('empty or duplicate entries in corner model group: '+str(name))
+    return sorted(models)
+
+
+def reported_corner_models(value):
+    """Decode the literal corModelSpec emitted for a native point."""
+    if not isinstance(value,str):
+        return []
+    if value.startswith('('):
+        try:
+            rows=literal(value)
+        except ValueError:
+            return []
+        if not isinstance(rows,list) or any(
+                not isinstance(row,list) or len(row)!=2
+                or not isinstance(row[0],str) or not os.path.isabs(row[0])
+                or not isinstance(row[1],str) or not re.fullmatch(r'[A-Za-z0-9_.-]+',row[1])
+                for row in rows):
+            return []
+        return sorted([os.path.realpath(path),section] for path,section in rows)
+    models=[]
+    for item in value.removesuffix(';').split(';'):
+        match=re.fullmatch(r'File=All#Global#(/[^"#;\r\n]+) Section="([A-Za-z0-9_.-]+)"',item)
+        if not match:
+            return []
+        path,section=match.groups()
+        models.append([os.path.realpath(path),section])
+    return sorted(models)
+
+
 def effective_spec(spec,setup):
     """Called under the library transaction lock, before modifying/running setup."""
     setup=Path(setup);qualify(setup)
@@ -109,10 +166,14 @@ def effective_spec(spec,setup):
     result['corners']=[]
     for c in active.findall('./corners/corner'):
         if c.get('enabled','1')=='0':continue
-        # The MVP only qualifies the native independent variable/corner grid.
-        if any(e.tag!='vars' for e in c):raise ValueError('unsupported corner setting; coverage unknown')
+        if any(e.tag not in ('vars','modelgroupname') for e in c):
+            raise ValueError('unsupported corner setting; coverage unknown')
         name=(c.text or '').strip()
-        result['corners'].append({'name':'nominal' if name=='_default' else name,'variables':variables(c)})
+        condition={'name':'nominal' if name=='_default' else name,'variables':variables(c)}
+        models=saved_corner_models(active,c)
+        if models:
+            condition['models']=models
+        result['corners'].append(condition)
     if not result['corners']:raise ValueError('no enabled saved corners; coverage unknown')
     mode=active.findtext('currentmode','').strip()
     if mode!='Single Run, Sweeps and Corners':raise ValueError('unsupported run mode; coverage unknown: '+mode)
@@ -160,7 +221,10 @@ def expected_conditions(spec):
                 raise ValueError('unsupported variable/sweep condition: '+key+'='+str(value))
         if any(not vals for vals in dimensions.values()):raise ValueError('empty sweep axis')
         for coordinates in itertools.product(*dimensions.values()):
-            rows.append({'corner':c['name'],'variables':dict(zip(dimensions,coordinates))})
+            row={'corner':c['name'],'variables':dict(zip(dimensions,coordinates))}
+            if c.get('models'):
+                row['models']=c['models']
+            rows.append(row)
     return rows
 
 
@@ -172,6 +236,8 @@ def verify_coverage(points,expected,test):
         for index in unmatched:
             condition=expected[index]
             if p['test']!=test or p['corner']!=condition['corner']:continue
+            if condition.get('models') and reported_corner_models(p['variables'].get('corModelSpec'))!=condition['models']:
+                continue
             try:
                 ok=all(math.isclose(numeric(p['variables'][k]),v,rel_tol=1e-9,abs_tol=1e-18) for k,v in condition['variables'].items())
             except (KeyError,ValueError,TypeError):ok=False

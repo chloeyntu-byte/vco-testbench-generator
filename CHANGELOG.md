@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+- Inherit supported Maestro model-group corners when adding a test to an existing setup.
+- Qualify each corner's model files and sections against its native point alongside its variable values.
+- Document the supported model-group scope and cover it with a fictional offline fixture.
+
 ## 1.0.0
 
 - First public release of the standalone CLI and Python package.

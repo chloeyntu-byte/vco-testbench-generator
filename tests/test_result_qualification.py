@@ -97,6 +97,49 @@ class ResultQualification(unittest.TestCase):
         coverage,issues=verify_coverage(dup,expected,'COPY');self.assertTrue(issues);self.assertEqual(coverage['matched'],1);self.assertEqual(len(coverage['missing']),3)
         points[0]['test']='ORIGINAL';self.assertTrue(verify_coverage(points,expected,'COPY')[1])
 
+    def test_saved_model_group_coverage(self):
+        with tempfile.TemporaryDirectory() as directory:
+            saved_setup(directory)
+            setup = Path(directory) / 'maestro.sdb'
+            xml = setup.read_text().replace(
+                '>TT</corner>',
+                '>TT<modelgroupname>"ExampleGroup"</modelgroupname>'
+                '<vars><var>temperature<value>40</value></var></vars></corner>')
+            models = """<modelgroups><modelgroup>ExampleGroup<models>
+              <model enabled="1">device.scs
+                <modeltest>All</modeltest><modelblock>Global</modelblock>
+                <modelfile>/path/to/device.scs</modelfile><modelsection>"example_device"</modelsection>
+              </model>
+              <model enabled="1">passive.scs
+                <modeltest>All</modeltest><modelblock>Global</modelblock>
+                <modelfile>/path/to/passive.scs</modelfile><modelsection>"example_passive"</modelsection>
+              </model>
+              </models></modelgroup></modelgroups>"""
+            setup.write_text(xml.replace('</active>', models + '</active>'))
+            spec = {'mode': 'add_test_to_existing', 'maestro': {'test': 'COPY'}, 'analyses': []}
+            expected = expected_conditions(effective_spec(spec, directory))
+            self.assertEqual(len(expected), 4)
+            points = []
+            for index, condition in enumerate(expected):
+                values = dict(condition['variables'])
+                if condition['corner'] == 'TT':
+                    values['corModelSpec'] = (
+                        'File=All#Global#/path/to/passive.scs Section="example_passive";'
+                        'File=All#Global#/path/to/device.scs Section="example_device";')
+                points.append(dict(condition, variables=values, point_id=index, test='COPY'))
+            self.assertEqual(verify_coverage(points, expected, 'COPY')[0]['matched'], 4)
+            values = points[0]['variables']
+            values['corModelSpec'] = ('(("/path/to/device.scs" "example_device") '
+                                      '("/path/to/passive.scs" "example_passive"))')
+            self.assertEqual(verify_coverage(points, expected, 'COPY')[0]['matched'], 4)
+            for reported in ('', values['corModelSpec'].replace('example_device', 'example_other')):
+                with self.subTest(reported=reported):
+                    values['corModelSpec'] = reported
+                    self.assertEqual(verify_coverage(points, expected, 'COPY')[0]['matched'], 3)
+            setup.write_text(setup.read_text().replace('<modeltest>All</modeltest>', '<modeltest>COPY</modeltest>'))
+            with self.assertRaisesRegex(ValueError, 'unsupported model group scope'):
+                effective_spec(spec, directory)
+
     def test_missing_and_wrong_variable_rejected(self):
         expected=[{'corner':'TT','variables':{'CODE':10}}]
         for variables in [{},{'CODE':11},{'CODE':'NaN'}]:

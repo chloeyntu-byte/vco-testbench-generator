@@ -1,7 +1,7 @@
 """Independent VCO testbench generator. Public imports load on demand."""
 from importlib import import_module
 
-__version__ = '1.0.0'
+__version__ = '1.1.0'
 
 _EXPORTS = {
     'isf': ('isf', None),

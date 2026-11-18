@@ -18,6 +18,10 @@ Generate a Virtuoso testbench and Maestro analysis setup for an LC VCO.
 
 The Python 3.11+ CLI and API can validate and plan a request offline. Native operations require your own licensed Virtuoso IC6.1.8-class and Spectre installation, matching PDK, and OA library mapping. The package has no GUI or third-party Python runtime dependencies.
 
+Existing IC6.1.8 setups can inherit saved global model-group corners. The
+generator qualifies reported model files and sections alongside the sweep
+variables. See [calling rules](docs/CALLING_RULES.md).
+
 ## Install and run the offline example
 
 From the repository root, in a Python 3.11+ environment:
@@ -81,7 +85,6 @@ Other open-source tools:
 - [Tank Scan Lab](https://github.com/chloeyntu-byte/tank-scan-lab): LC tank scans (f0, Rp, gm, startup margin, loss shares), capacitor-array C/Q and resonance
 - [Layout 3D Viewer](https://github.com/chloeyntu-byte/layout-3d-viewer): read IC layouts in 3D, locate pins and trace connections
 - [VCO ISF Explorer](https://github.com/chloeyntu-byte/vco-isf-explorer): ISF, flicker-noise up-conversion and phase-noise contributions
-- [Crescendo](https://github.com/chloeyntu-byte/crescendo): automatic device-size optimization inside Cadence Maestro
 - [VCO Design Studio](https://github.com/chloeyntu-byte/vco-design-studio): five literature LC VCO topology families, packaged schematics and native export
 
 ## License

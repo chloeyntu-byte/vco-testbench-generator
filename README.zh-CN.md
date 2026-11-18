@@ -18,6 +18,9 @@
 
 Python 3.11+ 可离线验证输入和生成计划。原生操作需要自行准备有许可证的 Virtuoso IC6.1.8 级环境、Spectre、相应 PDK 和 OA 库映射。软件提供 CLI 和 Python 接口，无图形界面和第三方 Python 运行依赖。
 
+现有 IC6.1.8 配置可继承保存的全局模型组工艺角。结果校验会核对模型文件、
+section 和扫参变量。参见 [调用规则](docs/CALLING_RULES.md)。
+
 ## 安装与离线示例
 
 在仓库根目录，使用 Python 3.11 或更新版本：
@@ -81,7 +84,6 @@ L-a 至 L-d、会话保留和结果核验详见[规范](docs/SPEC.md)。
 - [Tank Scan Lab](https://github.com/chloeyntu-byte/tank-scan-lab)：LC 谐振腔扫描（f0、Rp、gm、起振裕量、损耗分摊）、电容阵列 C/Q 与谐振
 - [Layout 3D Viewer](https://github.com/chloeyntu-byte/layout-3d-viewer)：三维阅读版图、定位 pin、追踪连接
 - [VCO ISF Explorer](https://github.com/chloeyntu-byte/vco-isf-explorer)：ISF、闪烁噪声上变频与相噪贡献
-- [Crescendo](https://github.com/chloeyntu-byte/crescendo)：在 Cadence Maestro 里自动优化器件尺寸
 - [VCO Design Studio](https://github.com/chloeyntu-byte/vco-design-studio)：五类文献 LC VCO 拓扑、分层原理图与原生导出
 
 ## 许可证

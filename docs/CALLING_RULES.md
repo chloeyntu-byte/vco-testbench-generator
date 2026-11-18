@@ -35,7 +35,7 @@ request ──> plan (offline) ──> materialize (native) ──> run ──> 
 1. **Plan offline.** `plan(spec)` never touches OA data. It returns `ready` with a spec hash, or `needs_input` with the fields to confirm.
 2. **Confirm with the user.** Port roles from `classify_ports` are suggestions. The host shows them and records the user's confirmation; it never auto-accepts an ambiguous role, a register width or a supply value.
 3. **Materialize with the same plan.** `materialize(spec, plan)` rejects a spec whose hash differs from the plan.
-4. **Run and read results** through `run(receipt)` and `results(handle)`. A result is usable only when the required outputs and saves pass qualification.
+4. **Run and read results** through `run(receipt)` and `results(handle)`. A result is usable only when the required outputs, saves and point coverage pass qualification. For an inherited model-group corner, coverage checks the reported file/section pairs against the saved group. Supported IC6.1.8 setupdb v6 groups use absolute paths, named sections and the All/Global scope. Unsupported formats fail before launch.
 
 ## 4. Writing rules
 

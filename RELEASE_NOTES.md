@@ -1,7 +1,16 @@
-# VCO TB Generator 1.0.0
+# VCO TB Generator 1.1.0
 
-This release packages the CLI, Python API, fixture schema and native SKILL resources. It supports plans for new LC VCO testbenches and tests that inherit an existing Maestro setup. The generic L-c request in `examples/` runs without EDA software.
+Tests added to an existing Maestro setup can inherit saved global model-group
+corners. Result coverage checks the reported model files and named sections for
+each corner, along with the numeric sweep and corner values. A missing or
+different model section leaves the point unmatched.
 
-For native materialization and execution, supply a compatible Virtuoso/Spectre environment, a mapped DUT and your own PDK binding. The existing-test preservation path targets IC6.1.8 setupdb v6 and statedb v5.
+The supported format is a saved IC6.1.8 setupdb v6 group with absolute model-file
+paths, named sections and the All/Global scope. Unsupported saved group
+formats are rejected before launch. See the [calling rules](docs/CALLING_RULES.md)
+and [specification](docs/SPEC.md).
 
-The fixture schema stays at `vco-tbgen.spec.v1`. Existing ISF callers can continue to use `vco_tbgen.isf` and the session APIs. See [runtime configuration](docs/API.md#native-runtime) for portable defaults and optional site wrapping.
+The fixture schema remains `vco-tbgen.spec.v1`. Try the fictional L-c request
+under [examples](examples) with `vco-tbgen plan examples/generic-request.json --json`.
+Native operations require your own licensed Cadence installation and model
+binding.
